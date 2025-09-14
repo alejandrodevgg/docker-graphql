@@ -2,13 +2,17 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -19,8 +23,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo "Iniciando login"
-          echo "${{ secrets.DOCKER_PASSWORD }}"
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USER }}" --password-stdin
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           echo "Fin del login"
 
 #    - name: Build the Docker image
